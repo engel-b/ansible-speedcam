@@ -1,8 +1,6 @@
 - name: Setup speedcam
   hosts: localhost
   connection: local
-  vars_files:
-  - configuration.yml
   tasks:
   - name: Update and upgrade apt packages
     become: true
