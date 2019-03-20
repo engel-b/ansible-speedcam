@@ -23,9 +23,9 @@
 
   - name: Enable user configuration
     lineinfile:
-      path: /home/pi/speed-camera/config.py
-      regexp: "{{ item.regexp }}"
-      line: "{{ item.line }}"
+      name: /home/pi/speed-camera/config.py
+      regexp: "{{item.regexp}}"
+      line: "{{item.line}}"
     with_items:
     - { regexp: '^pluginEnable =', line: 'pluginEnable = True' }
     - { regexp: '^pluginName =', line: 'pluginName = "picam"' }
@@ -37,7 +37,7 @@
   - name: Autostart speed-camera
     become: true
     blockinfile:
-      path: /etc/rc.local
+      name: /etc/rc.local
       marker: "<!-- {mark} ANSIBLE MANAGED BLOCK -->"
       insertbefore: "^exit 0"
       content: |
