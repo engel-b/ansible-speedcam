@@ -29,3 +29,17 @@
     with_items:
     - { regexp: '^pluginEnable =', line: 'pluginEnable = True' }
     - { regexp: '^pluginName =', line: 'pluginName = "picam"' }
+
+  - name: Ensure all files in speed-camera are owned by pi
+    become: true
+    shell: chown -R pi:pi /home/pi/speed-camera/*
+
+  - name: Autostart speed-camera
+    become: true
+    blockinfile:
+      path: /etc/rc.local
+      marker: "<!-- {mark} ANSIBLE MANAGED BLOCK -->"
+      insertbefore: "^exit 0"
+      content: |
+        su pi -c "/home/pi/speed-camera/speed-cam.sh start > /dev/null"
+        su pi -c "/home/pi/speed-camera/webserver.sh start > /dev/null"
