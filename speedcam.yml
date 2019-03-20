@@ -1,0 +1,31 @@
+- name: Setup speedcam
+  hosts: localhost
+  connection: local
+  vars_files:
+  - configuration.yml
+  tasks:
+  - name: Update and upgrade apt packages
+    become: true
+    apt:
+      upgrade: yes
+      update_cache: yes
+      cache_valid_time: 86400 #One day
+
+  - name: Install speedcam
+    shell: curl -L https://raw.github.com/pageauc/speed-camera/master/speed-install.sh | bash
+    args:
+      chdir: /home/pi/
+
+  - name: Copy configuration
+    template:
+      src: ./picam.py.j2
+      dest: /home/pi/speed-camera/plugins/picam.py
+
+  - name: Enable user configuration
+    lineinfile:
+      path: /home/pi/speed-camera/config.py
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+    with_items:
+    - { regexp: '^pluginEnable =', line: 'pluginEnable = True' }
+    - { regexp: '^pluginName =', line: 'pluginName = "picam"' }
